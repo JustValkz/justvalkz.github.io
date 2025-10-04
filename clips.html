@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JustValkz - Game Clips</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #e0e0e0; font-family: sans-serif; overflow-x: hidden; }
+    .nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,15,0.95); padding: 1rem; text-align: center; z-index: 100; }
+    .nav a { margin: 0 1rem; color: #e0e0e0; text-decoration: none; }
+    .container { max-width: 900px; margin: 6rem auto 2rem; padding: 0 1rem; }
+    header { text-align: center; margin-bottom: 3rem; }
+    header h1 { font-size: 3rem; color: #4cd7ff; }
+    header h2 { font-size: 1.4rem; margin-top: 0.5rem; color: #ccc; }
+    .section { margin: 3rem 0; opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+    .section.visible { opacity: 1; transform: translateY(0); }
+    .section h3 { font-size: 1.8rem; margin-bottom: 1rem; border-left: 4px solid #4cd7ff; padding-left: 1rem; }
+    .section p { font-size: 1.1rem; color: #ddd; margin-bottom: 1rem; }
+    .clip { margin-bottom: 2rem; }
+    .clip iframe { width: 100%; height: 400px; border: none; border-radius: 8px; }
+    footer { text-align: center; padding: 2rem 0; border-top: 1px solid #333; margin-top: 4rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a href="/clips.html">Game Clips</a>
+    <a href="#projects">Projects</a>
+    <a href="#tools">Tools</a>
+  </nav>
+  <div class="container">
+    <header>
+      <h1>JustValkz</h1>
+      <h2>Game Clips</h2>
+    </header>
+
+    <div class="section" id="clips">
+      <h3>Clips</h3>
+      <div id="clips-container"></div>
+    </div>
+
+    <footer>&copy; <span id="yr"></span> JustValkz</footer>
+  </div>
+
+  <script>
+    document.getElementById("yr").textContent = new Date().getFullYear();
+
+    // Intersection observer for fade-in effect
+    const secs = document.querySelectorAll(".section");
+    const obs = new IntersectionObserver((ent) => {
+      ent.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add("visible");
+      });
+    }, { threshold: 0.2 });
+    secs.forEach(s => obs.observe(s));
+
+    // Load clips from JSON
+    fetch('clips.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('clips-container');
+        data.forEach(clip => {
+          const div = document.createElement('div');
+          div.classList.add('clip');
+          div.innerHTML = `
+            <h4>${clip.name}</h4>
+            <p>${clip.description}</p>
+            <iframe src="${clip.link}" allowfullscreen></iframe>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => console.error('Error loading clips:', err));
+  </script>
+</body>
+</html>
