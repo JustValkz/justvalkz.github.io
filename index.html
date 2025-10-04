@@ -5,28 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustValkz</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a0f; color: #e0e0e0; font-family: sans-serif; overflow-x: hidden; }
-    .nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,15,0.95); padding: 1rem; text-align: center; z-index: 100; }
-    .nav a { margin: 0 1rem; color: #e0e0e0; text-decoration: none; }
-    .container { max-width: 900px; margin: 6rem auto 2rem; padding: 0 1rem; }
-    header { text-align: center; margin-bottom: 3rem; }
-    header h1 { font-size: 3rem; color: #4cd7ff; }
-    header h2 { font-size: 1.4rem; margin-top: 0.5rem; color: #ccc; }
-    .section { margin: 3rem 0; opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
-    .section.visible { opacity: 1; transform: translateY(0); }
-    .section h3 { font-size: 1.8rem; margin-bottom: 1rem; border-left: 4px solid #4cd7ff; padding-left: 1rem; }
-    .section p { font-size: 1.1rem; color: #ddd; }
-    footer { text-align: center; padding: 2rem 0; border-top: 1px solid #333; margin-top: 4rem; font-size: 0.9rem; }
+    /* --- Base & Reset --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a {
+      color: #4cd7ff;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #a0eaff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 4rem 0 2rem;
+      position: relative;
+    }
+    header h1 {
+      font-size: 3.5rem;
+      color: #4cd7ff;
+      opacity: 0;
+      transform: translateY(-30px);
+      animation: fadeInDown 1s forwards 0.3s;
+    }
+    header h2 {
+      font-size: 1.5rem;
+      margin-top: 0.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s forwards 0.8s;
+    }
+
+    @keyframes fadeInDown {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10,10,15,0.95);
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+      transform: translateY(-100%);
+      animation: slideDownNav 1s forwards 0.2s;
+    }
+    @keyframes slideDownNav {
+      to {
+        transform: translateY(0);
+      }
+    }
+    .nav a {
+      margin: 0 1rem;
+      font-weight: 500;
+    }
+
+    .section {
+      margin: 3rem 0;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .section h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #4cd7ff;
+      padding-left: 1rem;
+    }
+    .section p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .tools-grid .tool {
+      background: #1a1a23;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .tools-grid .tool:hover {
+      background: #2a2a38;
+      transform: translateY(-6px);
+    }
+    .tools-grid .tool img {
+      max-width: 60px;
+      margin-bottom: 0.5rem;
+    }
+    .tools-grid .tool span {
+      display: block;
+      margin-top: 0.3rem;
+      font-size: 0.9rem;
+      color: #cfcfcf;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid #333;
+      margin-top: 4rem;
+      font-size: 0.9rem;
+    }
+
+    /* Some extra animate background swirl (crazy coder style) */
+    .bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  <canvas class="bg-canvas"></canvas>
+
   <nav class="nav">
-    <a href="/">Home</a>
-    <a href="/clips.html">Game Clips</a>
+    <a href="index.html">Home</a>
+    <a href="clips.html">Game Clips</a>
     <a href="#projects">Projects</a>
     <a href="#tools">Tools</a>
   </nav>
+
   <div class="container">
     <header>
       <h1>JustValkz</h1>
@@ -37,36 +176,97 @@
       <h3>About Me</h3>
       <p>
         I’m <strong>JustValkz</strong>, a Software Engineer who builds ethical hack clients and tools across multiple languages.  
-        I am skilled in C++, C, C#, .NET frameworks, JavaScript, Java, Python, HTML, CSS, and more.
+        I am skilled in C++, C, C#, .NET frameworks, JavaScript, Java, Python, HTML, CSS, and more.  
+        When you need a high-performance cross-platform tool or a secure system, I deliver with precision and creativity.
       </p>
     </div>
 
     <div class="section" id="projects">
       <h3>Projects</h3>
       <p>
-        I’ve worked on penetration testing frameworks, custom modules, automation tools, dashboards, etc.
+        I have worked on penetration testing frameworks, custom client modules, automation tools, and web-based dashboards.  
+        Each project pushes boundaries in security, performance, or usability.
       </p>
+      <!-- You can list or link to your project repos -->
     </div>
 
     <div class="section" id="tools">
       <h3>Tools & Technologies</h3>
-      <p>
-        My stack includes: C++, .NET/C#, JavaScript, Python, Java, HTML5, CSS3, and more.
-      </p>
+      <div class="tools-grid">
+        <!-- Replace with your icons -->
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="C++"><span>C++</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="C"><span>C</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt=".NET"><span>.NET / C#</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="JavaScript"><span>JavaScript</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="Java"><span>Java</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="Python"><span>Python</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="HTML5"><span>HTML5</span></div>
+        <div class="tool"><img src="https://via.placeholder.com/60" alt="CSS3"><span>CSS3</span></div>
+      </div>
     </div>
 
-    <footer>&copy; <span id="yr"></span> JustValkz</footer>
+    <footer>
+      &copy; <span id="yr"></span> JustValkz. All rights reserved.
+    </footer>
   </div>
 
   <script>
+    // Update year
     document.getElementById("yr").textContent = new Date().getFullYear();
-    const secs = document.querySelectorAll(".section");
-    const obs = new IntersectionObserver((ent) => {
-      ent.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add("visible");
+
+    // Section reveal on scroll
+    const sections = document.querySelectorAll(".section");
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(ent => {
+        if (ent.isIntersecting) {
+          ent.target.classList.add("visible");
+        }
       });
     }, { threshold: 0.2 });
-    secs.forEach(s => obs.observe(s));
+    sections.forEach(s => obs.observe(s));
+
+    // Canvas background swirl animation
+    const canvas = document.querySelector(".bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    const particles = [];
+    const PARTICLE_COUNT = 120;
+
+    function initCanvas() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      particles.length = 0;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          r: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.5 + 0.2,
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(76, 215, 255, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("resize", initCanvas);
+    initCanvas();
+    draw();
   </script>
 </body>
 </html>
