@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JustValkz — Game Clips</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #e0e0e0; font-family: sans-serif; }
+    .nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,15,0.95); padding: 1rem; text-align: center; z-index: 100; }
+    .nav a { margin: 0 1rem; color: #e0e0e0; text-decoration: none; }
+    .nav a.active { color: #4cd7ff; }
+    .container { max-width: 900px; margin: 6rem auto 2rem; padding: 0 1rem; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 2.8rem; color: #4cd7ff; }
+    header p { margin-top: 0.5rem; color: #ccc; }
+    .add-form { background: #1a1a23; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+    .add-form input, .add-form textarea { width: 100%; padding: 0.6rem; margin-bottom: 1rem; background: #111; border: 1px solid #333; color: #e0e0e0; border-radius: 4px; }
+    .add-form button { padding: 0.8rem 1.3rem; background: #4cd7ff; border: none; color: #0a0a0f; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
+    .add-form button:hover { background: #82e5ff; }
+    .clips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.5rem; }
+    .clip { background: #1a1a23; border-radius: 8px; overflow: hidden; transition: transform 0.3s; }
+    .clip:hover { transform: translateY(-5px); }
+    .clip iframe, .clip video { width: 100%; display: block; background: black; }
+    .clip .info { padding: 0.75rem; color: #ddd; }
+    .clip .info h4 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .clip .info p { font-size: 0.9rem; color: #bbb; }
+    footer { text-align: center; padding: 2rem 0; border-top: 1px solid #333; margin-top: 3rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a class="active" href="#">Game Clips</a>
+    <a href="/#projects">Projects</a>
+    <a href="/#tools">Tools</a>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>Game Clips</h1>
+      <p>Watch my gameplay & share yours.</p>
+    </header>
+
+    <div class="add-form">
+      <input type="text" id="clipTitle" placeholder="Clip title" required />
+      <input type="text" id="clipURL" placeholder="YouTube or .mp4/.webm URL" required />
+      <textarea id="clipDesc" placeholder="Short description"></textarea>
+      <button id="addClipBtn">Add Clip</button>
+    </div>
+
+    <div class="clips-grid" id="clipsGrid"></div>
+
+    <footer>&copy; <span id="yr2"></span> JustValkz</footer>
+  </div>
+
+  <script>
+    document.getElementById("yr2").textContent = new Date().getFullYear();
+
+    async function loadClips() {
+      try {
+        const resp = await fetch("/api/clips");
+        const clips = await resp.json();
+        const grid = document.getElementById("clipsGrid");
+        grid.innerHTML = "";
+        clips.forEach(c => {
+          const div = document.createElement("div");
+          div.className = "clip";
+          let embed = "";
+          if (c.url.includes("youtube.com") || c.url.includes("youtu.be")) {
+            let vid = "";
+            if (c.url.includes("v=")) vid = new URL(c.url).searchParams.get("v");
+            else vid = c.url.split("/").pop();
+            embed = `<iframe src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;
+          } else if (c.url.endsWith(".mp4") || c.url.endsWith(".webm")) {
+            embed = `<video controls src="${c.url}"></video>`;
+          } else {
+            embed = `<p>Unsupported video URL</p>`;
+          }
+          div.innerHTML = `
+            ${embed}
+            <div class="info">
+              <h4>${c.title}</h4>
+              <p>${c.description || ""}</p>
+            </div>
+          `;
+          grid.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error loading clips:", err);
+      }
+    }
+
+    document.getElementById("addClipBtn").addEventListener("click", async () => {
+      const title = document.getElementById("clipTitle").value.trim();
+      const url = document.getElementById("clipURL").value.trim();
+      const desc = document.getElementById("clipDesc").value.trim();
+      if (!title || !url) {
+        alert("Please fill title & URL");
+        return;
+      }
+      try {
+        const res = await fetch("/api/clips", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, url, description: desc })
+        });
+        const result = await res.json();
+        if (result.error) {
+          alert("Error adding clip: " + result.error);
+        }
+        document.getElementById("clipTitle").value = "";
+        document.getElementById("clipURL").value = "";
+        document.getElementById("clipDesc").value = "";
+        loadClips();
+      } catch (err) {
+        console.error("Add clip error:", err);
+      }
+    });
+
+    loadClips();
+  </script>
+</body>
+</html>
