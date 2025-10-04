@@ -17,7 +17,7 @@
     .section.visible { opacity: 1; transform: translateY(0); }
     .section h3 { font-size: 1.8rem; margin-bottom: 1rem; border-left: 4px solid #4cd7ff; padding-left: 1rem; }
 
-    /* Clips cards */
+    /* Clips card layout */
     #clips-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
     .clip {
       background: #111118;
@@ -29,37 +29,11 @@
       box-shadow: 0 4px 20px rgba(76,215,255,0.3);
       position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-height: 200px; /* Gives cards some height without video */
     }
     .clip:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(76,215,255,0.5); }
     .clip h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #4cd7ff; text-align: center; }
     .clip p { font-size: 1rem; color: #ccc; margin-top: 0.5rem; text-align: center; }
-    .clip video, .clip iframe {
-      width: 100%;
-      height: 200px;
-      border-radius: 12px;
-      object-fit: cover;
-      background: #000;
-      position: relative;
-    }
-
-    /* Fullscreen button */
-    .fullscreen-btn {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      background: rgba(0,0,0,0.6);
-      color: #4cd7ff;
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
 
     /* Footer */
     footer { text-align: center; padding: 2rem 0; border-top: 1px solid #333; margin-top: 4rem; font-size: 0.9rem; }
@@ -103,7 +77,21 @@
 
     <div class="section" id="clips">
       <h3>Clips</h3>
-      <div id="clips-container"></div>
+      <div id="clips-container">
+        <!-- Example Cards without Video -->
+        <div class="clip">
+          <h4>Epic Test Clip 1</h4>
+          <p>This is a placeholder description for the clip.</p>
+        </div>
+        <div class="clip">
+          <h4>Epic Test Clip 2</h4>
+          <p>Another placeholder description goes here.</p>
+        </div>
+        <div class="clip">
+          <h4>Epic Test Clip 3</h4>
+          <p>More information about this clip.</p>
+        </div>
+      </div>
     </div>
 
     <footer>&copy; <span id="yr"></span> JustValkz</footer>
@@ -126,50 +114,6 @@
     document.addEventListener('mousemove', e => {
       cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     });
-
-    // Load clips
-    fetch('clips.json')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('clips-container');
-        data.forEach(clip => {
-          const div = document.createElement('div');
-          div.classList.add('clip');
-
-          if (clip.link.endsWith('.mp4') || clip.link.includes('cdn.discord')) {
-            const video = document.createElement('video');
-            video.src = clip.link;
-            video.controls = true;
-            video.style.borderRadius = "12px";
-
-            const btn = document.createElement('button');
-            btn.className = "fullscreen-btn";
-            btn.innerHTML = "⤢";
-            btn.addEventListener('click', () => {
-              if (video.requestFullscreen) video.requestFullscreen();
-              else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-            });
-
-            const wrapper = document.createElement('div');
-            wrapper.style.position = "relative";
-            wrapper.appendChild(video);
-            wrapper.appendChild(btn);
-
-            div.innerHTML = `<h4>${clip.name}</h4>`;
-            div.appendChild(wrapper);
-            div.innerHTML += `<p>${clip.description}</p>`;
-          } else {
-            div.innerHTML = `
-              <h4>${clip.name}</h4>
-              <iframe src="${clip.link}" allowfullscreen></iframe>
-              <p>${clip.description}</p>
-            `;
-          }
-
-          container.appendChild(div);
-        });
-      })
-      .catch(err => console.error('Error loading clips:', err));
   </script>
 </body>
 </html>
