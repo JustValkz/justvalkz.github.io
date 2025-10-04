@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Example Tool 1",
+    "description": "This is a test EXE for demonstration purposes.",
+    "link": "files/ExampleTool1.exe"
+  },
+  {
+    "name": "Example Tool 2",
+    "description": "Another tool with some description.",
+    "link": "files/ExampleTool2.exe"
+  },
+  {
+    "name": "Automation Helper",
+    "description": "A small utility to automate tasks efficiently.",
+    "link": "files/AutomationHelper.exe"
+  }
+]
