@@ -5,20 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustValkz - Game Clips</title>
   <style>
+    /* --- Base & Reset --- */
     * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-    body { background: #0a0a0f; color: #e0e0e0; font-family: sans-serif; overflow-x: hidden; }
-    .nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,15,0.95); padding: 1rem; text-align: center; z-index: 100; }
-    .nav a { margin: 0 1rem; color: #e0e0e0; text-decoration: none; }
-    .container { max-width: 900px; margin: 6rem auto 2rem; padding: 0 1rem; }
-    header { text-align: center; margin-bottom: 3rem; }
-    header h1 { font-size: 3rem; color: #4cd7ff; }
-    header h2 { font-size: 1.4rem; margin-top: 0.5rem; color: #ccc; }
-    .section { margin: 3rem 0; opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
-    .section.visible { opacity: 1; transform: translateY(0); }
-    .section h3 { font-size: 1.8rem; margin-bottom: 1rem; border-left: 4px solid #4cd7ff; padding-left: 1rem; }
+    body { background: #0a0a0f; color: #e0e0e0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; overflow-x: hidden; }
+    a { color: #4cd7ff; text-decoration: none; }
+    a:hover { color: #a0eaff; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
 
-    /* Clips card layout */
-    #clips-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    header { text-align: center; padding: 4rem 0 2rem; position: relative; }
+    header h1 { font-size: 3.5rem; color: #4cd7ff; opacity: 0; transform: translateY(-30px); animation: fadeInDown 1s forwards 0.3s; }
+    header h2 { font-size: 1.5rem; margin-top: 0.5rem; opacity: 0; transform: translateY(30px); animation: fadeInUp 1s forwards 0.8s; }
+
+    @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+    .nav { position: fixed; top: 0; left: 0; width: 100%; background: rgba(10,10,15,0.95); display: flex; justify-content: center; padding: 1rem; z-index: 100; transform: translateY(-100%); animation: slideDownNav 1s forwards 0.2s; }
+    @keyframes slideDownNav { to { transform: translateY(0); } }
+    .nav a { margin: 0 1rem; font-weight: 500; }
+
+    .section { margin: 3rem 0; opacity: 0; transform: translateY(40px); }
+    .section.visible { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .section h3 { font-size: 2rem; margin-bottom: 1rem; border-left: 4px solid #4cd7ff; padding-left: 1rem; }
+
+    #clips-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
     .clip {
       background: #111118;
       border-radius: 12px;
@@ -29,42 +38,56 @@
       box-shadow: 0 4px 20px rgba(76,215,255,0.3);
       position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      min-height: 200px; /* Gives cards some height without video */
+      min-height: 220px;
     }
     .clip:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(76,215,255,0.5); }
     .clip h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #4cd7ff; text-align: center; }
     .clip p { font-size: 1rem; color: #ccc; margin-top: 0.5rem; text-align: center; }
 
-    /* Footer */
+    .clip video, .clip iframe {
+      width: 100%; 
+      height: 180px; 
+      border-radius: 12px; 
+      object-fit: cover; 
+      background: #000;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(0,0,0,0.6);
+      color: #4cd7ff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
     footer { text-align: center; padding: 2rem 0; border-top: 1px solid #333; margin-top: 4rem; font-size: 0.9rem; }
 
-    /* Custom scroll bar */
     ::-webkit-scrollbar { width: 12px; }
     ::-webkit-scrollbar-track { background: #0a0a0f; }
     ::-webkit-scrollbar-thumb { background: #4cd7ff; border-radius: 6px; }
 
-    /* Animated cyan cursor */
-    .cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      background: #4cd7ff;
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      transition: transform 0.05s ease-out;
-      z-index: 9999;
-    }
+    .cursor { position: fixed; top: 0; left: 0; width: 16px; height: 16px; background: #4cd7ff; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); transition: transform 0.05s ease-out; z-index: 9999; }
+
+    .bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
   </style>
 </head>
 <body>
+  <canvas class="bg-canvas"></canvas>
   <div class="cursor"></div>
 
   <nav class="nav">
-    <a href="/">Home</a>
-    <a href="/clips.html">Game Clips</a>
+    <a href="index.html">Home</a>
+    <a href="clips.html">Game Clips</a>
     <a href="#projects">Projects</a>
     <a href="#tools">Tools</a>
   </nav>
@@ -78,19 +101,7 @@
     <div class="section" id="clips">
       <h3>Clips</h3>
       <div id="clips-container">
-        <!-- Example Cards without Video -->
-        <div class="clip">
-          <h4>Epic Test Clip 1</h4>
-          <p>This is a placeholder description for the clip.</p>
-        </div>
-        <div class="clip">
-          <h4>Epic Test Clip 2</h4>
-          <p>Another placeholder description goes here.</p>
-        </div>
-        <div class="clip">
-          <h4>Epic Test Clip 3</h4>
-          <p>More information about this clip.</p>
-        </div>
+        <!-- Clips will be added here via JSON -->
       </div>
     </div>
 
@@ -100,20 +111,90 @@
   <script>
     document.getElementById("yr").textContent = new Date().getFullYear();
 
-    // Intersection Observer
-    const secs = document.querySelectorAll(".section");
-    const obs = new IntersectionObserver((ent) => {
-      ent.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add("visible");
+    // Section reveal on scroll
+    const sections = document.querySelectorAll(".section");
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(ent => {
+        if (ent.isIntersecting) ent.target.classList.add("visible");
       });
     }, { threshold: 0.2 });
-    secs.forEach(s => obs.observe(s));
+    sections.forEach(s => obs.observe(s));
 
     // Custom cursor
     const cursor = document.querySelector('.cursor');
     document.addEventListener('mousemove', e => {
       cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     });
+
+    // Canvas background swirl
+    const canvas = document.querySelector(".bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    const particles = [];
+    const PARTICLE_COUNT = 120;
+    function initCanvas() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      particles.length = 0;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.2,
+          vy: (Math.random()-0.5)*0.2,
+          r: Math.random()*2+1,
+          alpha: Math.random()*0.5+0.2,
+        });
+      }
+    }
+    function draw() {
+      ctx.clearRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        if(p.x<0||p.x>w) p.vx*=-1;
+        if(p.y<0||p.y>h) p.vy*=-1;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+        ctx.fillStyle = `rgba(76,215,255,${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    window.addEventListener("resize", initCanvas);
+    initCanvas(); draw();
+
+    // Load clips from JSON
+    fetch('clips.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('clips-container');
+        data.forEach(clip => {
+          const div = document.createElement('div');
+          div.classList.add('clip');
+          
+          // Check if link is YouTube
+          let embedHTML = '';
+          if(clip.link.includes('youtube.com') || clip.link.includes('youtu.be')) {
+            embedHTML = `<iframe src="${clip.link}" frameborder="0" allowfullscreen></iframe>`;
+          } else {
+            embedHTML = `
+              <div style="position: relative; width: 100%;">
+                <video src="${clip.link}" controls></video>
+                <button class="fullscreen-btn" onclick="this.previousElementSibling.requestFullscreen()">⤢</button>
+              </div>
+            `;
+          }
+
+          div.innerHTML = `
+            <h4>${clip.name}</h4>
+            ${embedHTML}
+            <p>${clip.description}</p>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err=>console.error('Error loading clips:', err));
   </script>
 </body>
 </html>
