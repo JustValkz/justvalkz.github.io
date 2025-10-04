@@ -144,7 +144,6 @@
       font-size: 0.9rem;
     }
 
-    /* Some extra animate background swirl (crazy coder style) */
     .bg-canvas {
       position: fixed;
       top: 0;
@@ -160,8 +159,8 @@
   <canvas class="bg-canvas"></canvas>
 
   <nav class="nav">
-    <a href="index.html">Home</a>
-    <a href="clips.html">Game Clips</a>
+    <a href="/">Home</a>
+    <a href="/clips.html">Game Clips</a>
     <a href="#projects">Projects</a>
     <a href="#tools">Tools</a>
   </nav>
@@ -187,7 +186,6 @@
         I have worked on penetration testing frameworks, custom client modules, automation tools, and web-based dashboards.  
         Each project pushes boundaries in security, performance, or usability.
       </p>
-      <!-- You can list or link to your project repos -->
     </div>
 
     <div class="section" id="tools">
@@ -225,7 +223,7 @@
     }, { threshold: 0.2 });
     sections.forEach(s => obs.observe(s));
 
-    // Canvas background swirl animation
+    // Canvas background swirl
     const canvas = document.querySelector(".bg-canvas");
     const ctx = canvas.getContext("2d");
     let w, h;
