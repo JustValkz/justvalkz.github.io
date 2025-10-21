@@ -1,12 +1,12 @@
 [
   {
-    "name": "Epic Sniper Kill",
+    "name": "Example 1",
     "link": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    "description": "A fast-paced sniper montage showing quick reflexes."
+    "description": "Example"
   },
   {
-    "name": "Funny Game Glitch",
+    "name": "Example 2",
     "link": "https://www.youtube.com/embed/9bZkp7q19f0",
-    "description": "Caught a hilarious game bug while exploring the map."
+    "description": "Example"
   }
 ]
